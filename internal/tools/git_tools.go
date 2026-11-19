@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -17,6 +18,7 @@ type GitHistoryArgs struct {
 
 type GitCommit struct {
 	Hash    string `json:"hash"`
+	Author  string `json:"author"`
 	Date    string `json:"date"`
 	Message string `json:"message"`
 }
@@ -30,19 +32,19 @@ func ReadGitHistory(
 	args GitHistoryArgs,
 ) ([]byte, error) {
 	// 98d2579ef526f133440171a8adfcb57761cd3309^_2026-11-16^_init: project ideation
-	if args.Limit <= 0 || args.Limit > 100 {
+	if args.Limit <= 0 || args.Limit > 50 {
 		return nil, errors.New("limit must be between 1 and 50")
 	}
 
+	// command: git -C . log -n 20 --format=%H%x1f%ae%x1f%ad%x1f%s --author=%whois% --date=short
+	whois := fmt.Sprintf("--author=%s", os.Getenv("GIT_EMAIL"))
 	cmd := exec.CommandContext(
 		ctx,
 		"git",
-		"-C",
-		".",
-		"log",
-		"-n",
-		strconv.Itoa(args.Limit),
-		"--format=%H%x1f%ad%x1f%s",
+		"-C", ".", // directory
+		"log", "-n", strconv.Itoa(args.Limit), // display commit history with limit
+		"--format=%H%x1f%ae%x1f%ad%x1f%s",
+		whois,
 		"--date=short",
 	)
 
@@ -58,15 +60,16 @@ func ReadGitHistory(
 			continue
 		}
 
-		fields := strings.SplitN(line, "\x1f", 3)
-		if len(fields) != 3 {
+		fields := strings.SplitN(line, "\x1f", 4)
+		if len(fields) != 4 {
 			return nil, errors.New("invalid git log output")
 		}
 
 		result.Commits = append(result.Commits, GitCommit{
 			Hash:    fields[0],
-			Date:    fields[1],
-			Message: fields[2],
+			Author:  fields[1],
+			Date:    fields[2],
+			Message: fields[3],
 		})
 	}
 
