@@ -54,19 +54,11 @@ func NewClient(baseURL string, apiKey string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) CallAIService(ctx context.Context, userPrompt string, tools ...Message) (*AIResponse, error) {
+func (c *Client) CallAIService(ctx context.Context, prompts ...Message) (*AIResponse, error) {
 	// prepare ai model, prepare tools
-	messages := []Message{
-		{
-			Role:    "user",
-			Content: userPrompt,
-		},
-	}
-	messages = append(messages, tools...)
-
 	aiReq := AIRequest{
 		Model:     "gpt-4o-mini",
-		Messages:  messages,
+		Messages:  prompts,
 		Tools:     c.Tools,
 		MaxTokens: 150,
 	}

@@ -39,13 +39,9 @@ type AIRequest struct {
 
 // response builder
 type ResponseChoices struct {
-	Index   int `json:"index"`
-	Message struct {
-		Role      string     `json:"role"`
-		Content   string     `json:"content"`
-		ToolCalls []ToolCall `json:"tool_calls,omitempty"`
-	} `json:"message"`
-	FinishReason string `json:"finish_reason"`
+	Index        int     `json:"index"`
+	Message      Message `json:"message"`
+	FinishReason string  `json:"finish_reason"`
 }
 
 type AIResponse struct {
