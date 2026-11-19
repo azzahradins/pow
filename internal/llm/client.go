@@ -54,16 +54,19 @@ func NewClient(baseURL string, apiKey string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) CallAIService(ctx context.Context, prompt string) (*AIResponse, error) {
+func (c *Client) CallAIService(ctx context.Context, userPrompt string, tools ...Message) (*AIResponse, error) {
 	// prepare ai model, prepare tools
-	aiReq := AIRequest{
-		Model: "gpt-4o-mini",
-		Messages: []Message{
-			{
-				Role:    "user",
-				Content: prompt,
-			},
+	messages := []Message{
+		{
+			Role:    "user",
+			Content: userPrompt,
 		},
+	}
+	messages = append(messages, tools...)
+
+	aiReq := AIRequest{
+		Model:     "gpt-4o-mini",
+		Messages:  messages,
 		Tools:     c.Tools,
 		MaxTokens: 150,
 	}
@@ -105,8 +108,12 @@ func (c *Client) CallAIService(ctx context.Context, prompt string) (*AIResponse,
 	}
 	logger.Printf("[%s] %s | Res: %s", "POST", c.BaseURL, resBody)
 
-	// deciding what tool to be called
-	for _, toolCall := range aiResponse.Choices[0].Message.ToolCalls {
+	return &aiResponse, nil
+}
+
+func (c *Client) ToolCallService(ctx context.Context, choices ResponseChoices) ([]Message, error) {
+	var toolResult []Message = nil
+	for _, toolCall := range choices.Message.ToolCalls {
 		if toolCall.Function.Name == "read_git_history" {
 			var gitArgs struct {
 				Limit int `json:"limit"`
@@ -120,8 +127,7 @@ func (c *Client) CallAIService(ctx context.Context, prompt string) (*AIResponse,
 				return nil, err
 			}
 
-			// Append tool result to conversation.
-			aiReq.Messages = append(aiReq.Messages, Message{
+			toolResult = append(toolResult, Message{
 				Role:       "tool",
 				ToolCallID: toolCall.ID,
 				Content:    string(result),
@@ -129,6 +135,5 @@ func (c *Client) CallAIService(ctx context.Context, prompt string) (*AIResponse,
 		}
 		// else if - insert here for another tools
 	}
-
-	return &aiResponse, nil
+	return toolResult, nil
 }

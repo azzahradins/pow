@@ -38,7 +38,7 @@ func ReadGitHistory(
 		ctx,
 		"git",
 		"-C",
-		"D:\\project\\thesis",
+		".",
 		"log",
 		"-n",
 		strconv.Itoa(args.Limit),

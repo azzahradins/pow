@@ -1,5 +1,6 @@
 package llm
 
+// used by requestor
 type Tool struct {
 	Type     string       `json:"type"`
 	Function ToolFunction `json:"function"`
@@ -36,20 +37,23 @@ type AIRequest struct {
 	MaxTokens  int       `json:"max_tokens,omitempty"`
 }
 
+// response builder
+type ResponseChoices struct {
+	Index   int `json:"index"`
+	Message struct {
+		Role      string     `json:"role"`
+		Content   string     `json:"content"`
+		ToolCalls []ToolCall `json:"tool_calls,omitempty"`
+	} `json:"message"`
+	FinishReason string `json:"finish_reason"`
+}
+
 type AIResponse struct {
-	ID      string `json:"id"`
-	Object  string `json:"object"`
-	Created int64  `json:"created"`
-	Choices []struct {
-		Index   int `json:"index"`
-		Message struct {
-			Role      string     `json:"role"`
-			Content   string     `json:"content"`
-			ToolCalls []ToolCall `json:"tool_calls,omitempty"`
-		} `json:"message"`
-		FinishReason string `json:"finish_reason"`
-	} `json:"choices"`
-	Usage struct {
+	ID      string            `json:"id"`
+	Object  string            `json:"object"`
+	Created int64             `json:"created"`
+	Choices []ResponseChoices `json:"choices"`
+	Usage   struct {
 		PromptTokens     int `json:"prompt_tokens"`
 		CompletionTokens int `json:"completion_tokens"`
 		TotalTokens      int `json:"total_tokens"`
