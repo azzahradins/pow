@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"context"
@@ -11,11 +11,7 @@ import (
 	"id.azz/pow/pkg/utility"
 )
 
-func audit(ctx context.Context) error {
-	if err := logger.New(os.Getenv("DEBUG_MODE") == "true", os.Getenv("LOG_FOLDER")); err != nil {
-		return err
-	}
-	defer logger.Close()
+func RunAudit(ctx context.Context) error {
 
 	db, err := storage.InitDB("pow.db")
 	if err != nil {

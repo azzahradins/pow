@@ -12,6 +12,11 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	if err := logger.New(os.Getenv("DEBUG_MODE") == "true", os.Getenv("LOG_FOLDER")); err != nil {
+		panic("System failed to logging | implication: missing report & usage history")
+	}
+	defer logger.Close()
+
 	if len(os.Args) < 1 {
 		PrintHelp()
 		os.Exit(1)

@@ -19,5 +19,6 @@ Output perspective:
 - Do not combine multiple activities into a long sentence.
 - Prefer concise phrases over complete narrative sentences.
 - Maximum 15 words per accomplishment.
+- Create summary as bullet point.
 
 Use available tools when additional information is required.
