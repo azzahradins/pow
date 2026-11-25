@@ -19,6 +19,7 @@ Output perspective:
 - Do not combine multiple activities into a long sentence.
 - Prefer concise phrases over complete narrative sentences.
 - Maximum 15 words per accomplishment.
-- Create summary as bullet point.
+- group data date following with its summary, example: `YYYYMMDD - Lorem Ipsum`. new lines to every different
+- only show 1 summary per day, order by date asc
 
 Use available tools when additional information is required.

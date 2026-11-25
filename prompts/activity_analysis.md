@@ -1,4 +1,4 @@
-Analyze my activities today.
+Analyze my activities in this repository, maximum 50 commits
 
 Focus on:
 - Git commits from %s

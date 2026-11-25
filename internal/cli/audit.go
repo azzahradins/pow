@@ -66,7 +66,7 @@ func RunAudit(ctx context.Context) error {
 				chatHistory = append(chatHistory, toolUsage...)
 				logger.Printf("string tool builder: %s", toolUsage)
 			case "stop":
-				fmt.Printf("Audit result:\n %s", result.Choices[0].Message.Content)
+				fmt.Printf("Audit result:\n%s", result.Choices[0].Message.Content)
 				return nil
 			}
 		}
