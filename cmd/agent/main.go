@@ -6,6 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"id.azz/pow/internal/cli"
+	"id.azz/pow/pkg/logger"
 )
 
 func main() {
@@ -18,20 +21,22 @@ func main() {
 	defer logger.Close()
 
 	if len(os.Args) < 1 {
-		PrintHelp()
+		cli.PrintHelp()
 		os.Exit(1)
 	}
 
 	var err error
 	switch os.Args[1] {
 	case "audit":
-		err = audit(ctx)
+		err = cli.RunAudit(ctx)
 	case "help", "-h", "--help":
-		PrintHelp()
+		cli.PrintHelp()
 		return
+	case "init":
+		err = cli.RunInit(ctx, os.Args[2:])
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown command: %s\n\n", os.Args[1])
-		PrintHelp()
+		cli.PrintHelp()
 		os.Exit(1)
 	}
 

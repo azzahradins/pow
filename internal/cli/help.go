@@ -1,4 +1,4 @@
-package main
+package cli
 
 import "fmt"
 
@@ -8,6 +8,7 @@ Usage:
 	pow <command> [flags]
 
 Commands:
+	init	 Initialize file/repository tracking
 	audit    Perform a daily audit
 	help     Show all available commands
 
